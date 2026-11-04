@@ -1,41 +1,30 @@
-name: Deploy a GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]      # cambia si tu rama se llama distinto
-  workflow_dispatch:       # permite lanzarlo a mano desde la pestaña Actions
+    branches:
+      - main
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-concurrency:
-  group: pages
-  cancel-in-progress: true
-
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22        # el mismo que tu Dockerfile
-          cache: npm
-      - run: npm ci
-      # - run: npm test         # actívalo cuando tengas Vitest
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deployment
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: '.'
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
