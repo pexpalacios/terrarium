@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    working_dir: /app/app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
+    environment: 
+      - HOME=/tmp
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/app/node_modules
