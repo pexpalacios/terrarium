@@ -1,6 +1,9 @@
 up:
 	docker-compose up --build -d
 
+exec:
+	docker compose run --rm app sh
+
 down:
 	docker-compose down
 
