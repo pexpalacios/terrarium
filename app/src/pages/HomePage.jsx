@@ -1,99 +1,32 @@
 import { useEffect, useState } from 'react'
-import { Story } from 'inkjs'
-import storySource from './story.js?raw'
+import { useTranslation, initReactI18next } from 'react-i18next';
 
-function getStoryContent(source) {
-	const start = source.indexOf('{')
-	const end = source.lastIndexOf('}')
-
-	if (start === -1 || end === -1 || end <= start) {
-		throw new Error('Could not read story content from story.js')
-	}
-
-	return JSON.parse(source.slice(start, end + 1))
-}
 
 function HomePage() {
-	const [story, setStory] = useState(null)
-	const [paragraphs, setParagraphs] = useState([])
-	const [choices, setChoices] = useState([])
-	const [error, setError] = useState('')
+	const { t } = useTranslation();
 
-	const continueStory = currentStory => {
-		const nextParagraphs = []
-
-		while (currentStory.canContinue) {
-			nextParagraphs.push(currentStory.Continue())
-		}
-
-		setParagraphs(previous => [...previous, ...nextParagraphs])
-		setChoices(
-			currentStory.currentChoices.map(choice => ({
-				index: choice.index,
-				text: choice.text,
-			}))
-		)
-	}
-
-	const startStory = () => {
-		try {
-			const storyContent = getStoryContent(storySource)
-			const nextStory = new Story(storyContent)
-			setStory(nextStory)
-			setParagraphs([])
-			setChoices([])
-			setError('')
-			continueStory(nextStory)
-		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Failed to load story')
-		}
-	}
-
-	useEffect(() => {
-		startStory()
-	}, [])
-
-	const handleChoice = index => {
-		if (!story) {
-			return
-		}
-
-		story.ChooseChoiceIndex(index)
-		setChoices([])
-		continueStory(story)
-	}
-
+/////
 	return (
-		<div>
-			<h1>The Intercept</h1>
+		<main>
+			<header>
+				<h1>{t("header")}</h1>
+			</header>
+			<aside id="side-menu">
+				<p>Player and stats here  {t("aside")}</p>
+			</aside>
+			<section id="game">
+				<div id="story" className="p-2">
+					<p>Import corresponding JSON here  {t("section")}</p>
+				</div>
 
-			{error && <p>{error}</p>}
-
-			<div id="story">
-				{paragraphs.map((paragraph, index) => (
-					<p key={`${index}-${paragraph.slice(0, 10)}`}>{paragraph}</p>
-				))}
-			</div>
-
-			<div>
-				{choices.map(choice => (
-					<button
-						key={choice.index}
-						type="button"
-						onClick={() => handleChoice(choice.index)}
-					>
-						{choice.text}
-					</button>
-				))}
-
-				<button
-					type="button"
-					onClick={startStory}
-				>
-					Restart story
-				</button>
-			</div>
-		</div>
+				<div id="buttons" className="flex flex-row justify-center text-uppercase p-4 gap-4">
+					<p>Map button choices here  {t("buttons")}</p>
+				</div>
+			</section>
+			<footer>
+				<p>Link or credits or something. Version 0.0.0  {t("footer")}</p>
+			</footer>
+		</main>
 	)
 }
 
