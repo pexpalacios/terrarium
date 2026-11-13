@@ -22,7 +22,7 @@ status:
 	docker-compose images
 
 logs:
-	docker-compose logs -f --tail:120
+	docker-compose logs -f
 
 help:
 	@echo "List of docker commands: (dev only)"

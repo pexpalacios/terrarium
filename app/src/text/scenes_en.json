@@ -1,0 +1,43 @@
+{
+	"scene_01": {
+		"init": true,
+		"text": [
+			"Hi, this is a test",
+			"In the next scene you'll see two choices"
+		],
+		"image": "url",
+		"alt": "for the image",
+		"choices": [
+			{ "text": "next", "target": "scene_02" }
+		]
+	},
+
+	"scene_02": {
+		"text": [
+			"These choices go to two different scenes",
+			"Now try using them"
+		],
+		"image": "url",
+		"alt": "for the image",
+		"choices": [
+			{ "text": "to scene 03 a", "target": "scene_03_a" },
+			{ "text": "to scene 03 b", "target": "scene_03_b" }
+		]
+	},
+
+	"scene_03_a": {
+		"text": [
+			"you're in scene 03 a"
+		],
+		"image": "url",
+		"alt": "for the image"
+	},
+
+	"scene_03_b": {
+		"text": [
+			"you're in scene 03 b"
+		],
+		"image": "url",
+		"alt": "for the image"
+	}
+}
