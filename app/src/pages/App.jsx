@@ -13,21 +13,11 @@ function App() {
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
+      <section id="center" className="flex flex-col gap-6 items-center justify-center min-h-screen min-w-screen bg-slate-200">
+        <p>This is a menu. It's still being designed.</p>
+		<button
           type="button"
-          className="counter"
+          className="bg-amber-500 p-3 rounded-md hover:bg-amber-600 text-slate-50 font-bold"
           onClick={() => navigate("/homepage")}
         >
           Go to homepage

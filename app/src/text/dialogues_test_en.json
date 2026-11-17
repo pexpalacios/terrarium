@@ -1,0 +1,23 @@
+{
+	"dialogue 00": {
+		"speaker": "NPC name",
+		"sprite":"npc-placeholder.png",
+		"text": [
+			"oh",
+			"hi"
+		],
+		"choices": [
+			{ "text": "1) 'hey'", "target": "dialogue 01" }
+		]
+	},
+	"dialogue 01": {
+		"speaker": "NPC name",
+		"sprite":"npc-placeholder.png",
+		"text": [
+			"and bye"
+		],
+		"choices": [
+			{ "text": "1) 'I gotta go'", "target": "scene_03_b" }
+		]
+	}
+}

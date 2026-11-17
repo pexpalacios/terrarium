@@ -22,7 +22,7 @@
 		"",
 		""
 	],
-	"choices"= [
+	"choices": [
 		{ "text": "", "target": "next scene id" },
 		{ "text": "", "target": "next scene id" }
 	]
