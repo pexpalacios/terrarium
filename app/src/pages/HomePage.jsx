@@ -1,6 +1,15 @@
 import { useEffect, useState, useRef } from 'react'
 import { useTranslation, initReactI18next } from 'react-i18next';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { far } from '@fortawesome/free-regular-svg-icons'
+import { fab } from '@fortawesome/free-brands-svg-icons'
+
+library.add(fas, far, fab)
+
+
 
 //load json files
 const modules = import.meta.glob('../text/*.json', { eager: true, import: 'default' });
@@ -64,17 +73,43 @@ function HomePage() {
 
 /////
 	return (
-		<main>
-			<header>
-				<h1>{t("header")}</h1>
-			</header>
-			<aside id="side-menu">
-				<p>Player and stats here  {t("aside")}</p>
+		<main className="min-h-screen m-0 flex flex-row gap-0 text-text-normal">
+			<aside id="side-menu" className="bg-slate-200 min-h-full flex flex-col font-balsamiq text-txt-normal overflow-auto w-1/4 border-r-4 border-slate-400">
+				<div id="pc-image" className="min-h-1/4 border-b-6 border-slate-400 md:shrink-0">
+					<img></img>
+				</div>
+				<div id="menu" className="flex flex-col justify-center text-center p-4 gap-2">
+					<button className="button-side-menu font-chango">Catalogue</button>
+					<button className="button-side-menu font-chango">Bag</button>
+					<button className="button-side-menu font-chango">Save</button>
+					<button className="button-side-menu font-chango">Export</button>
+				</div>
+				<div id="minimap" className="border-t-6 border-slate-400 ">
+					<img></img>
+				</div>
+
 			</aside>
-			<section id="game">
-				<div id="story" className="p-2">
-					<p>Import corresponding JSON here  {t("section")}</p>
-						<article ref={sceneRef} tabIndex={-1} aria-live="polite">
+			<section id="game" className="bg-slate-50 min-h-full w-full flex flex-col">
+				<header className="bg-slate-800 flex flex-row gap-4 min-h-12 justify-start items-center p-2">
+					{/* Clock component */}
+					<div className="flex flex-row gap-4 items-center">
+						<FontAwesomeIcon icon="fa-solid fa-clock" />
+						<p>11:00 AM</p>
+					</div>
+					<p> | </p>
+					{/* Weather component */}
+					<div className="flex flex-row gap-4 items-center">
+						<FontAwesomeIcon icon="fa-solid fa-cloud" />
+						<p>Cloudy</p>
+					</div>
+
+				</header>
+				<div id="story" className="bg-slate-200 p-8 flex-auto overscroll-contain">
+					<article id="scene-image" className="bg-blue-300 w-full min-h-48">
+						{/* every scene image must have a couple anchor points that bugs can appear on. no idea how to do that though */}
+					</article>
+					{/* I want the scenes and dialogues to be a bit different html wise, so I may need to change this structure */}
+						<article ref={sceneRef} tabIndex={-1} aria-live="polite" className="mt-4 h-auto overflow-auto">
 							{currentNode.imagen && (
 							<figure>
 								<img src={`/img/${currentNode.imagen}`} alt={currentNode.alt ?? ''} />
@@ -93,10 +128,10 @@ function HomePage() {
 						</article>
 				</div>
 
-				<div id="buttons" className="flex flex-row justify-center text-uppercase p-4 gap-4">
-					<p>Map button choices here  {t("buttons")}</p>
+				<div id="buttons" className="bg-slate-100 flex flex-col justify-center text-uppercase p-4 gap-4 flex-auto">
+					{/* add numbered navigation to choices, somehow */}
 					<nav aria-label="Opciones">
-							<ul>
+							<ul className="text-txt-normal">
 							{choices.map((choice) => (
 								<li key={choice.target + choice.text}>
 								<button type="button" onClick={() => choose(choice)}>
@@ -114,10 +149,10 @@ function HomePage() {
 							</ul>
 						</nav>
 				</div>
-			</section>
-			<footer>
-				<p>Link or credits or something. Version 0.0.0  {t("footer")}</p>
+			<footer className="bg-slate-300 mt-auto">
+				<p className="uppercase font-balsamiq text-sm text-center">Link or credits or something. Version 0.0.0  {t("footer")}</p>
 			</footer>
+			</section>
 		</main>
 	)
 }
