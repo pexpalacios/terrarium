@@ -7,7 +7,7 @@ import './i18n';
 
 //pages imports
 import App from './pages/App.jsx'
-import HomePage from './pages/HomePage.jsx'
+import Game from './pages/Game.jsx'
 
 //router
 const router = createBrowserRouter([
@@ -16,8 +16,8 @@ const router = createBrowserRouter([
 		element: <App />,
 	},
 	{
-		path: "/homepage",
-		element: <HomePage />,
+		path: "/game",
+		element: <Game />,
 	},
 ]);
 

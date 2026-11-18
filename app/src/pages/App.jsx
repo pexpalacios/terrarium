@@ -18,9 +18,9 @@ function App() {
 		<button
           type="button"
           className="bg-amber-500 p-3 rounded-md hover:bg-amber-600 text-slate-50 font-bold"
-          onClick={() => navigate("/homepage")}
+          onClick={() => navigate("/game")}
         >
-          Go to homepage
+          Go to game
         </button>
       </section>
     </>

@@ -1,23 +1,23 @@
 {
 	"dialogue 00": {
-		"speaker": "NPC name",
+		"speaker": "Tutorial guy",
 		"sprite":"npc-placeholder.png",
 		"text": [
-			"oh",
-			"hi"
+			"hello! I'm glad to see there's more people here"
 		],
 		"choices": [
-			{ "text": "1) 'hey'", "target": "dialogue 01" }
+			{ "text": "1) 'Hi!'", "target": "dialogue 01" }
 		]
 	},
 	"dialogue 01": {
-		"speaker": "NPC name",
+		"speaker": "Tutorial guy",
 		"sprite":"npc-placeholder.png",
 		"text": [
-			"and bye"
+			"I'll give you a tip. Bugs have only some probability of appearing. When you see one, click on it to catch it.",
+			"Some of them are a bit more difficult and they will jump to avoid you! Keep trying until you catch them!"
 		],
 		"choices": [
-			{ "text": "1) 'I gotta go'", "target": "scene_03_b" }
+			{ "text": "1) 'Thanks!'", "target": "scene_02" }
 		]
 	}
 }

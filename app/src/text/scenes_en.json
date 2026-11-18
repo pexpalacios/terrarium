@@ -3,45 +3,28 @@
 		"init": true,
 		"location": "flower field",
 		"text": [
-			"Hi, this is a test",
-			"In the next scene you'll see two choices"
+			"Hi, welcome to the tutorial!",
+			"You find yourself in the flower field just outside town. It expands up to a couple hundred meters, then the forest starts.",
+			"A couple steps away there's another person with bug catching equipment."
 		],
 		"image": "",
 		"alt": "for the image",
 		"choices": [
-			{ "text": "1) next", "target": "scene_02" }
+			{ "text": "1) Look for bugs (30 min) | Increases chances of bug spawn", "target": "scene_01" },
+			{ "text": "2) Approach person", "target": "dialogue 00" }
 		]
 	},
 
 	"scene_02": {
 		"location": "flower field",
 		"text": [
-			"These choices go to two different scenes",
-			"Now try using them"
+			"With this new information you feel like catching something."
 		],
 		"image": "",
 		"alt": "for the image",
 		"choices": [
-			{ "text": "1) talk to some guy", "target": "dialogue 00" },
-			{ "text": "2) to scene 03 b", "target": "scene_03_b" }
+			{ "text": "1) Look for bugs (30 min) | Increases chances of bug spawn", "target": "scene_01"},
+			{ "text": "2) Rest (15 min)", "target": "scene_01" }
 		]
-	},
-
-	"scene_03_a": {
-		"location": "flower field",
-		"text": [
-			"you're in scene 03 a"
-		],
-		"image": "bg-placeholder.png",
-		"alt": "for the image"
-	},
-
-	"scene_03_b": {
-		"location": "flower field",
-		"text": [
-			"you're in scene 03 b"
-		],
-		"image": "bg-placeholder.png",
-		"alt": "for the image"
 	}
 }

@@ -28,7 +28,7 @@ const idFromHash = () => {
 const hasRequirements = (requires = {}, state) =>
 	Object.entries(requires).every(([key, value]) => state[key] === value)
 
-function HomePage() {
+function Game() {
 	const { t } = useTranslation()
 	const [nodeId, setNodeId] = useState(idFromHash)
 	const [state, setState] = useState({})
@@ -53,7 +53,7 @@ function HomePage() {
 
 	const currentNode = nodes[nodeId]
 
-	// preserve location background while in dialogue nodes with no location
+	// get location
 	useEffect(() => {
 		if (currentNode?.location)
 			setActiveLocation(currentNode.location)
@@ -96,6 +96,7 @@ function HomePage() {
 
 	return (
 		<main className="min-h-screen m-0 flex flex-row gap-0 text-text-normal">
+			{/* component for sidebar, only mobile */}
 			{sidebarOpen && (
 				<button
 					type="button"
@@ -104,18 +105,18 @@ function HomePage() {
 					onClick={() => setSidebarOpen(false)}
 				></button>
 			)}
-
+			{/* aside will be a sidebar with a menu button on mobile and fixed in tablet/pc */}
 			<aside id="side-menu"
 				className={[
-					'fixed inset-y-0 left-0 z-40 w-72 max-w-[85vw] bg-slate-200 border-r-4 border-slate-400',
+					'fixed inset-y-0 left-0 z-40 w-3/4 bg-background-tone-2-light border-r-4 border-brown-light',
 					'flex flex-col overflow-auto transition-transform duration-300',
 					sidebarOpen 
 					? 'translate-x-0' 
 					: '-translate-x-full',
-					'md:static md:translate-x-0 md:w-[22rem] md:min-h-screen md:flex-shrink-0'
+					'md:static md:translate-x-0 md:w-1/4 md:min-h-screen md:flex-shrink-0'
 				].join(' ')}
 			>
-				<div id="pc-image" className="min-h-1/4 border-b-6 border-slate-400 md:shrink-0">
+				<div id="pc-image" className="min-h-1/3 border-b-6 border-brown-light md:shrink-0">
 					<img></img>
 				</div>
 				<div id="menu" className="flex flex-col justify-center text-center p-4 gap-2">
@@ -124,25 +125,27 @@ function HomePage() {
 					<button className="button-side-menu font-chango">Save</button>
 					<button className="button-side-menu font-chango">Export</button>
 				</div>
-				<div id="minimap" className="border-t-6 border-slate-400 ">
+				<div id="minimap" className="border-t-6 border-brown-light ">
 					<img></img>
 				</div>
 			</aside>
 
-			<section id="game" className="bg-slate-50 min-h-screen w-full flex flex-col">
-				<header className="bg-slate-800 flex flex-row gap-4 min-h-12 justify-start items-center p-2">
+			<section id="game" className="bg-background-tone-1-light min-h-screen w-full flex flex-col">
+				<header className="bg-brown-light flex flex-row gap-4 min-h-12 justify-start items-center p-2 text-white">
 					<button
 						type="button"
-						className="md:hidden rounded bg-slate-700 px-3 py-2 text-white"
+						className="md:hidden rounded bg-brown-light px-3 py-2 text-white"
 						onClick={() => setSidebarOpen(true)}
 					>
 						<FontAwesomeIcon icon="fa-solid fa-bars" />
 					</button>
+					{/* time component */}
 					<div className="flex flex-row gap-4 items-center">
 						<FontAwesomeIcon icon="fa-solid fa-clock" />
 						<p>11:00 AM</p>
 					</div>
 					<p> | </p>
+					{/* weather component */}
 					<div className="flex flex-row gap-4 items-center">
 						<FontAwesomeIcon icon="fa-solid fa-cloud" />
 						<p>Cloudy</p>
@@ -151,23 +154,22 @@ function HomePage() {
 
 				{isDialogue ? (
 					<div id="story" className="relative p-8 flex-1 overflow-hidden">
-						{/* background. stays the same for now */}
-						<div className="relative w-full min-h-48 bg-slate-300 bg-cover bg-cover bg-repeat-x overflow-hidden" style={sceneBackground}></div>
+						<div className="relative w-full min-h-48 bg-background-tone-2-light bg-cover bg-cover bg-repeat-x overflow-hidden" style={sceneBackground}></div>
 						<div className="absolute inset-0 bg-black/30"></div>
 						{spriteSrc && (
 							<img
 								src={spriteSrc}
 								alt={currentNode.spriteAlt ?? currentNode.alt ?? ''}
-								className="absolute bottom-0 left-1/2 h-[70%] -translate-x-1/2 object-contain"
+								className="absolute bottom-0 left-1/2 h-3/4 -translate-x-1/2 object-contain"
 							/>
 						)}
 						<article ref={sceneRef} tabIndex={-1}
 							className="absolute inset-x-4 bottom-4 gap-0"
 						>
 							<header className="w-fit">
-								<h1 className="font-chango text-lg rounded-xl border-2 border-slate-300 bg-slate-100/95 p-6">{currentNode.speaker}</h1>
+								<h1 className="font-chango text-lg rounded-xl border-2 border-background-tone-2-light bg-background-tone-1-light/95 p-6">{currentNode.speaker}</h1>
 							</header>
-							<div className="font-balsamiq text-slate-800 rounded-xl border-2 border-slate-300 bg-slate-100/95 p-6">
+							<div className="font-balsamiq text-brown-light rounded-xl border-2 border-background-tone-2-light bg-background-tone-1-light/95 p-6">
 								{paragraphs.map((p, i) => (
 									<p key={i}>{p}</p>
 								))}
@@ -175,18 +177,13 @@ function HomePage() {
 									<ul className="flex flex-row gap-2 text-txt-normal">
 										{choices.map((choice) => (
 											<li key={choice.target + choice.text}>
-												<button type="button" onClick={() => choose(choice)}>
+												<button type="button" onClick={() => choose(choice)}
+												className="w-full text-left text-wrap text-txt-normal"	
+												>
 													{choice.text}
 												</button>
 											</li>
 										))}
-										{finish && (
-											<li>
-												<button type="button" onClick={restart}>
-													restart
-												</button>
-											</li>
-										)}
 									</ul>
 								</nav>
 							</div>
@@ -194,8 +191,8 @@ function HomePage() {
 					</div>
 				) : (
 					<>
-						<div id="story" className="bg-slate-200 p-8 shrink-0">
-							<article id="scene-image" className="relative w-full min-h-48 bg-slate-300 bg-cover bg-cover bg-repeat-x overflow-hidden"
+						<div id="story" className="bg-background-tone-2-light p-8 shrink-0">
+							<article id="scene-image" className="relative w-full min-h-48 bg-background-tone-2-light bg-cover bg-cover bg-repeat-x overflow-hidden"
 								style={sceneBackground}
 							>
 							</article>
@@ -206,31 +203,25 @@ function HomePage() {
 							</article>
 						</div>
 
-						<div id="buttons" className="bg-slate-100 flex flex-col justify-start text-uppercase p-4 gap-4 flex-1 overflow-auto">
+						<div id="buttons" className="bg-background-tone-1-light flex flex-col flex-1 p-4 gap-4 overflow-auto">
 							<nav aria-label="options">
-								<ul className="text-txt-normal">
+								<ul>
 									{choices.map((choice) => (
 										<li key={choice.target + choice.text}>
-											<button type="button" onClick={() => choose(choice)}>
+											<button type="button" onClick={() => choose(choice)}
+											className="w-full text-left text-wrap text-txt-normal"	
+											>
 												{choice.text}
 											</button>
 										</li>
 									))}
-									{/* to be deleted */}
-									{finish && (
-										<li>
-											<button type="button" onClick={restart}>
-												restart
-											</button>
-										</li>
-									)}
 								</ul>
 							</nav>
 						</div>
 					</>
 				)}
 
-				<footer className="bg-slate-300 mt-auto">
+				<footer className="bg-background-tone-2-light mt-auto">
 					<p className="uppercase font-balsamiq text-sm text-center">Link or credits or something. Version 0.0.0 {t('footer')}</p>
 				</footer>
 			</section>
@@ -238,4 +229,4 @@ function HomePage() {
 	)
 }
 
-export default HomePage
+export default Game

@@ -23,12 +23,16 @@
 }
 
 @theme {
-	--color-dark-brown: #734444;
-	--color-light-brown: #c37857;
-	--color-light-green: #eeedbe;
-	--color-dark-green: #99b27f;
-	--color-green-gradient-dark: #8fac70;
-	--color-green-gradient-light: #a9c48c;
+	--color-background-tone-1-light: #f0e3d5;
+	--color-background-tone-2-light: #e8d2be;
+	--color-background-tone-1-dark: #47423d;
+	--color-background-tone-2-dark: #38332f;
+	--color-brown-dark: #7a562c;
+	--color-brown-light: #ad6d4c;
+	--color-green-light: #e6eebe;
+	--color-green-dark: #97b555;
+	--color-green-gradient-dark: #52a354;
+	--color-green-gradient-light: #b7e685;
 
 	--color-txt-normal: #989898;
 	--color-txt-normal-dark: #989898;
@@ -43,7 +47,7 @@
 
 /* CSS */
 .button-side-menu {
-  background-image: linear-gradient(#0dccea, #0d70ea);
+  background-image: linear-gradient(var(--color-green-gradient-light), var(--color-green-gradient-dark));
   border: 0;
   border-radius: 1rem;
   color: #fff;
