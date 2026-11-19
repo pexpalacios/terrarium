@@ -10,8 +10,17 @@
 		"image": "",
 		"alt": "for the image",
 		"choices": [
-			{ "text": "1) Look for bugs (30 min) | Increases chances of bug spawn", "target": "scene_01" },
-			{ "text": "2) Approach person", "target": "dialogue 00" }
+			{ 
+				"text": "1) Look for bugs", 
+				"time": 15,
+				"hint": "Increases chances of bug spawn",
+				"target": "scene_01" 
+			},
+			{ 
+				"text": "2) Approach person",
+				"time": 0, 
+				"target": "dialogue 00" 
+			}
 		]
 	},
 
@@ -23,8 +32,17 @@
 		"image": "",
 		"alt": "for the image",
 		"choices": [
-			{ "text": "1) Look for bugs (30 min) | Increases chances of bug spawn", "target": "scene_01"},
-			{ "text": "2) Rest (15 min)", "target": "scene_01" }
+			{ 
+				"text": "1) Look for bugs", 
+				"time": 20,
+				"hint": "Increases chances of bug spawn",
+				"target": "scene_01" 
+			},
+			{ 
+				"text": "2) Rest",
+				"time": 5,
+				"target": "scene_01" 
+			}
 		]
 	}
 }

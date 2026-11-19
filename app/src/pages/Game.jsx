@@ -6,68 +6,91 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { far } from '@fortawesome/free-regular-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
-
-import locations from '../text/locations.json'
-
 library.add(fas, far, fab)
 
+import locations from '../content/locations.json'
+import { createClock, advanceClock, getPeriod, formatTime, formatDuration } from '../systems/clock.js'
+import { INITIAL_WEATHER, advanceWeather, WEATHER_INFO } from '../systems/weather.js'
+
+
 // load scene and dialogue nodes only
-const modules = import.meta.glob('../text/{scenes_*.json,dialogues_*.json}', {
+const modules = import.meta.glob('../content/text/{scenes_*.json,dialogues_*.json}', {
 	eager: true,
 	import: 'default'
 })
-const nodes = Object.assign({}, ...Object.values(modules))
-const init_id = Object.keys(nodes).find((id) => nodes[id].init)
+const nodes = Object.assign({}, ...Object.values(modules));
+const init_id = Object.keys(nodes).find((id) => nodes[id].init);
 
 const idFromHash = () => {
-	const id = decodeURIComponent(window.location.hash.slice(1))
-	return nodes[id] ? id : init_id
+	const id = decodeURIComponent(window.location.hash.slice(1));
+	return (nodes[id] ? id : init_id);
 }
 
 // a choice shows only if requirements are met
 const hasRequirements = (requires = {}, state) =>
-	Object.entries(requires).every(([key, value]) => state[key] === value)
+	Object.entries(requires).every(([key, value]) => state[key] === value);
+
+//initial time + weather
+const createWorld = () => ({
+	clock: createClock(),
+	weather: INITIAL_WEATHER
+})
+
+const choiceLabel = (choice) => {
+	const duration = choice.time > 0 ? ` (${formatDuration(choice.time)})` : '';
+	const hint = choice.hint ? ` | ${choice.hint}` : '';
+	return (`${choice.text}${duration}${hint}`);
+}
 
 function Game() {
-	const { t } = useTranslation()
-	const [nodeId, setNodeId] = useState(idFromHash)
-	const [state, setState] = useState({})
-	const sceneRef = useRef(null)
-	const [sidebarOpen, setSidebarOpen] = useState(false)
+	const { t } = useTranslation();
+	const [nodeId, setNodeId] = useState(idFromHash);
+	const [state, setState] = useState({});
+	const [world, setWorld] = useState(createWorld);
+	const sceneRef = useRef(null);
+	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [activeLocation, setActiveLocation] = useState(() => {
-		const firstNodeId = idFromHash()
-		return nodes[firstNodeId]?.location ?? null
+		const firstNodeId = idFromHash();
+		return (nodes[firstNodeId]?.location ?? null);
 	})
 
 	// get current node from hash
 	useEffect(() => {
 		const changeHash = () => setNodeId(idFromHash())
-		window.addEventListener('hashchange', changeHash)
-		return () => window.removeEventListener('hashchange', changeHash)
-	}, [])
+		window.addEventListener('hashchange', changeHash);
+		return () => window.removeEventListener('hashchange', changeHash);
+	}, []);
 
 	// keep focus on changing content
 	useEffect(() => {
-		sceneRef.current?.focus()
-	}, [nodeId])
+		sceneRef.current?.focus();
+	}, [nodeId]);
 
-	const currentNode = nodes[nodeId]
+	const currentNode = nodes[nodeId];
 
 	// get location
 	useEffect(() => {
 		if (currentNode?.location)
-			setActiveLocation(currentNode.location)
-	}, [currentNode?.location])
+			setActiveLocation(currentNode.location);
+	}, [currentNode?.location]);
 
 	const choose = (choice) => {
 		if (choice.effects)
-			setState((previous) => ({ ...previous, ...choice.effects }))
-		window.location.hash = choice.target
+			setState((previous) => ({ ...previous, ...choice.effects }));
+		if (choice.time > 0)
+		{
+			const clock = advanceClock(world.clock, choice.time);
+			const weather = advanceWeather(world.weather, world.clock.total, clock.total);
+			setWorld({clock, weather});
+		}
+		window.location.hash = choice.target;
 	}
 
+	// to be deleted
 	const restart = () => {
-		setState({})
-		window.location.hash = init_id
+		setState({});
+		setWorld(createWorld());
+		window.location.hash = init_id;
 	}
 
 	if (!currentNode) {
@@ -78,21 +101,26 @@ function Game() {
 		)
 	}
 
-	const paragraphs = [].concat(currentNode.text)
-	const choices = (currentNode.choices ?? []).filter((e) => hasRequirements(e.requires, state))
-	const finish = choices.length === 0
-	const isDialogue = !!currentNode.speaker
+	const paragraphs = [].concat(currentNode.text);
+	const choices = (currentNode.choices ?? []).filter((e) => hasRequirements(e.requires, state));
+	const finish = choices.length === 0;
+	const isDialogue = !!currentNode.speaker;
 
+	//global time and weather
+	const locationKey = currentNode.location ?? activeLocation;
+	const location = locations[locationKey];
+	const period = getPeriod(world.clock);
+	const weatherInfo = WEATHER_INFO[world.weather];
+	
 	//get background image
-	const locationKey = currentNode.location ?? activeLocation
-	const locationDefaultImage = locations[locationKey]?.image ?? null
+	const locationDefaultImage = location?.[`${world.weather}-${period}`] ?? null;
 	const sceneImage = currentNode.image && currentNode.image.trim() !== ''
 		? currentNode.image
-		: locationDefaultImage
+		: locationDefaultImage;
 	const sceneBackground = sceneImage
 		? { backgroundImage: 'url(/img/' + sceneImage + ')' }
-		: undefined
-	const spriteSrc = currentNode.sprite ? '/img/' + currentNode.sprite : null
+		: undefined;
+	const spriteSrc = currentNode.sprite ? '/img/' + currentNode.sprite : null;
 
 	return (
 		<main className="min-h-screen m-0 flex flex-row gap-0 text-text-normal">
@@ -142,13 +170,13 @@ function Game() {
 					{/* time component */}
 					<div className="flex flex-row gap-4 items-center">
 						<FontAwesomeIcon icon="fa-solid fa-clock" />
-						<p>11:00 AM</p>
+						<p>{formatTime(world.clock)}</p>
 					</div>
 					<p> | </p>
 					{/* weather component */}
 					<div className="flex flex-row gap-4 items-center">
-						<FontAwesomeIcon icon="fa-solid fa-cloud" />
-						<p>Cloudy</p>
+						<FontAwesomeIcon icon={weatherInfo.icon} />
+						<p>{weatherInfo.label}</p>
 					</div>
 				</header>
 
@@ -180,7 +208,7 @@ function Game() {
 												<button type="button" onClick={() => choose(choice)}
 												className="w-full text-left text-wrap text-txt-normal"	
 												>
-													{choice.text}
+													{choiceLabel(choice)}
 												</button>
 											</li>
 										))}
@@ -211,7 +239,7 @@ function Game() {
 											<button type="button" onClick={() => choose(choice)}
 											className="w-full text-left text-wrap text-txt-normal"	
 											>
-												{choice.text}
+												{choiceLabel(choice)}
 											</button>
 										</li>
 									))}

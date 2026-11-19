@@ -15,9 +15,10 @@ WIP. A small browser game. La idea es un lifesim sobre coleccionar bichos. EL bu
 src/
 	main.jsx
 	App.jsx
-	core/		//código plano sin react. estado, guardado/carga, rng, clima, reloj
-	systems/	//funciones para sistemas del juego. economia, catalogo, captura, terrario
+	core/		//código plano sin react. estado, guardado/carga, 
+	systems/	//funciones para sistemas del juego. economia, catalogo, captura, terrario, rng, clima, reloj
 	content/	//datos. lugares, npcs, eventos
+		text/	//específico para dialogos y escenas
 	actions/	//catalogo de acciones, sigue lo que hace el jugador y avanza reloj, valida reglas
 	assets/		//sprites, placeholder /imgs
 	ui/			//componentes y patallas de react. canva? menus (catalogo, tiendas)
