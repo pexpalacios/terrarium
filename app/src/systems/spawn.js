@@ -1,6 +1,7 @@
 import bugsData from '../content/bugs.json'
 
 const bugs = Object.entries(bugsData).map(([id, bug]) => ({ id, ...bug }));
+export const ALL_BUGS = bugs;
 
 export const getViableBugs = (locationKey, period, weather) =>
 	bugs.filter((b) =>

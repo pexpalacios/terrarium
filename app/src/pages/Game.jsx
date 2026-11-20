@@ -11,7 +11,7 @@ library.add(fas, far, fab)
 import locations from '../content/locations.json'
 import { createClock, advanceClock, getPeriod, formatTime, formatDuration } from '../systems/clock.js'
 import { INITIAL_WEATHER, advanceWeather, WEATHER_INFO } from '../systems/weather.js'
-import { rollSpawns } from '../systems/spawn.js'
+import { rollSpawns, ALL_BUGS } from '../systems/spawn.js'
 
 
 // load scene and dialogue nodes only
@@ -55,6 +55,9 @@ function Game() {
 		return (nodes[firstNodeId]?.location ?? null);
 	});
 	const [spawns, setSpawns] = useState([]);
+	const [catalogue, setCatalogue] = useState({});
+	const [announcement, setAnnouncement] = useState(null);
+	const catalogueRef = useRef(null);
 
 	// get current node from hash
 	useEffect(() => {
@@ -95,17 +98,50 @@ function Game() {
 		window.location.hash = init_id;
 	}
 
+	//global time and weather
+	const locationKey = currentNode?.location ?? activeLocation;
+	const location = locations[locationKey];
+	const period = getPeriod(world.clock);
+	const weatherInfo = WEATHER_INFO[world.weather];
+	
+	// bug spawn
+	useEffect(() => {
+		setSpawns(rollSpawns(location, locationKey, period, world.weather))
+	}, [locationKey, period, world.weather])
+
+	const catchBug = (spotId) => {
+		const spawn = spawns.find((s) => s.spotId === spotId);
+		if (!spawn)
+			return;
+		const { bug } = spawn;
+		const isNew = !catalogue[bug.id];
+
+		setSpawns((prev) => prev.filter((s) => s.spotId !== spotId));
+		setCatalogue((prev) => ({...prev, [bug.id]: (prev[bug.id] ?? 0) + 1}));
+		setAnnouncement({ bug, isNew });
+	}
+
+	// capture feedback
+	useEffect(() => {
+		if (!announcement)
+			return;
+		const id = setTimeout(() => setAnnouncement(null), 1000);
+		return () => clearTimeout(id);
+	}, [announcement]);
+
+	if (!currentNode) {
+		return (
+			<main>
+				<p>Error: {nodeId} doesn't exist</p>
+			</main>
+		)
+	}
+
 	const paragraphs = [].concat(currentNode.text);
 	const choices = (currentNode.choices ?? []).filter((e) => hasRequirements(e.requires, state));
 	const finish = choices.length === 0;
 	const isDialogue = !!currentNode.speaker;
 
-	//global time and weather
-	const locationKey = currentNode.location ?? activeLocation;
-	const location = locations[locationKey];
-	const period = getPeriod(world.clock);
-	const weatherInfo = WEATHER_INFO[world.weather];
-	
 	//get background image
 	const locationDefaultImage = location?.[`${world.weather}-${period}`] ?? null;
 	const sceneImage = currentNode.image && currentNode.image.trim() !== ''
@@ -115,25 +151,6 @@ function Game() {
 		? { backgroundImage: 'url(/img/' + sceneImage + ')' }
 		: undefined;
 	const spriteSrc = currentNode.sprite ? '/img/' + currentNode.sprite : null;
-
-	// bug spawn
-	useEffect(() => {
-		setSpawns(rollSpawns(location, locationKey, period, world.weather))
-	}, [locationKey, period, world.weather])
-
-	const catchBug = (spotId) => {
-		const spawn = spawns.find((s) => s.spotId === spotId);
-		setSpawns((prev) => prev.filter((s) => s.spotId !== spotId));
-		setState((prev) => ({...prev, [`caught_${spawn.bug.id}`]: true }));
-	}
-
-	if (!currentNode) {
-		return (
-			<main>
-				<p>Error: {nodeId} doesn't exist</p>
-			</main>
-		)
-	}
 
 	return (
 		<main className="min-h-screen m-0 flex flex-row gap-0 text-text-normal">
@@ -146,6 +163,32 @@ function Game() {
 					onClick={() => setSidebarOpen(false)}
 				></button>
 			)}
+			<dialog ref={catalogueRef}
+				className="m-auto w-11/12 max-w-lg rounded-xl border-4 border-brown-light bg-background-tone-1-light p-6 text-brown-light backdrop:bg-black/50">
+				<h2 className="font-chango text-xl">Catalogue</h2>
+				<ul className="mt-4 flex justify-between gap-2 flex-wrap">
+					{ALL_BUGS.map((bug) => {
+						const count = catalogue[bug.id] ?? 0;
+						return (
+							<li key={bug.id} className="flex flex-col gap-3">
+								<span
+									className="h-20 w-20 flex-auto shrink-0 rounded"
+									style={{ backgroundColor: count > 0 ? bug.color : '#999' }}
+								></span>
+								<span className="left-0 font-balsamiq">
+									{count > 0 ? bug.name : '???'}
+									{count > 0 && <span className="font-chango">×{count}</span>}
+								</span>
+							</li>
+						);
+					})}
+				</ul>
+				<button type="button" className="button-side-menu font-chango mt-6"
+					onClick={() => catalogueRef.current?.close()}>
+					Close
+				</button>
+			</dialog>
+
 			{/* aside will be a sidebar with a menu button on mobile and fixed in tablet/pc */}
 			<aside id="side-menu"
 				className={[
@@ -161,7 +204,10 @@ function Game() {
 					<img></img>
 				</div>
 				<div id="menu" className="flex flex-col justify-center text-center p-4 gap-2">
-					<button className="button-side-menu font-chango">Catalogue</button>
+					<button className="button-side-menu font-chango"
+						onClick={() => { setSidebarOpen(false); catalogueRef.current?.showModal(); }}>
+						Catalogue
+					</button>
 					<button className="button-side-menu font-chango">Bag</button>
 					<button className="button-side-menu font-chango">Save</button>
 					<button className="button-side-menu font-chango">Export</button>
@@ -232,6 +278,17 @@ function Game() {
 					</div>
 				) : (
 					<>
+					{/* bug catching announcement */}
+					<div role="status" aria-live="polite"
+						className="fixed top-1/4 left-1/2 z-50 -translate-x-1/2">
+						{announcement && (
+							<p className="rounded-xl border-2 border-brown-light bg-background-tone-1-light p-4 font-balsamiq text-brown-light text-center slidein">
+								{announcement.isNew
+									? t('bug.first', { name: announcement.bug.name })
+									: t('bug.caught', { name: announcement.bug.name })}
+							</p>
+						)}
+					</div>
 						<div id="story" className="bg-background-tone-2-light p-8 shrink-0">
 							<article id="scene-image" className="relative w-full min-h-48 bg-background-tone-2-light bg-cover bg-cover bg-repeat-x overflow-hidden bg-blue-500"
 								style={sceneBackground}>

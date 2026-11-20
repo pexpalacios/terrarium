@@ -1,3 +1,7 @@
 {
-	"text": "haha"
+	"text": "haha",
+	"bug": {
+		"caught": "You caught a {{name}}!",
+		"first": "New bug! You caught a {{name}} for the first time!"
+	}
 }

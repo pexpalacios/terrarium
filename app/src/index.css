@@ -45,7 +45,7 @@
   	--font-balsamiq: "Balsamiq Sans", sans-serif;
 }
 
-/* CSS */
+/* Singular components */
 .button-side-menu {
   background-image: linear-gradient(var(--color-green-gradient-light), var(--color-green-gradient-dark));
   border: 0;
@@ -89,4 +89,20 @@
   .button-side-menu {
     padding: 16px 48px;
   }
+}
+
+/* Animations */
+
+@keyframes slidein {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+.slidein {
+	animation: slidein 0.3s ease-out;
 }
