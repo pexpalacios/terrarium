@@ -8,6 +8,7 @@ import './i18n';
 //pages imports
 import App from './pages/App.jsx'
 import Game from './pages/Game.jsx'
+import ErrorPage from './pages/ErrorPage.jsx'
 
 //router
 const router = createBrowserRouter(
