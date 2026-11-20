@@ -1,0 +1,34 @@
+{
+	"bug_00": {
+		"name": "ladybug",
+		"color": "#a12a38",
+		"locations": ["flower_field"],
+		"time": ["sunset", "night"],
+		"weather": ["cloudy", "rainy"],
+		"probability": 0.5
+	},
+	"bug_01": {
+		"name": "beetle",
+		"color": "#332d29",
+		"locations": ["flower_field"],
+		"time": ["dawn", "noon", "sunset", "night"],
+		"weather": ["sunny", "cloudy", "rainy"],
+		"probability": 1
+	},
+	"bug_02": {
+		"name": "snail",
+		"color": "#5d7d48",
+		"locations": ["flower_field"],
+		"time": ["dawn", "noon", "sunset", "night"],
+		"weather": ["rainy"],
+		"probability": 1
+	},
+	"bug_03": {
+		"name": "dragonfly",
+		"color": "#487fc2",
+		"locations": ["flower_field"],
+		"time": ["dawn", "noon"],
+		"weather": ["sunny"],
+		"probability": 0.8
+	}
+}

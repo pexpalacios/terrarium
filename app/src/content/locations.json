@@ -1,6 +1,11 @@
 {
-	"flower field": {
+	"flower_field": {
 		"minimap": "",
+		"spots": [
+			{"id": "ff-1", "x": 15, "y": 70},
+			{"id": "ff-2", "x": 45, "y": 80},
+			{"id": "ff-3", "x": 75, "y": 60}
+		] ,
 		"sunny-dawn": "bg-placeholder.png",
 		"sunny-noon": "bg-placeholder.png",
 		"sunny-sunset": "bg-placeholder.png",

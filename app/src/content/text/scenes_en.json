@@ -1,7 +1,7 @@
 {
 	"scene_01": {
 		"init": true,
-		"location": "flower field",
+		"location": "flower_field",
 		"text": [
 			"Hi, welcome to the tutorial!",
 			"You find yourself in the flower field just outside town. It expands up to a couple hundred meters, then the forest starts.",
@@ -25,7 +25,7 @@
 	},
 
 	"scene_02": {
-		"location": "flower field",
+		"location": "flower_field",
 		"text": [
 			"With this new information you feel like catching something."
 		],

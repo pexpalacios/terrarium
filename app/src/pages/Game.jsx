@@ -11,6 +11,7 @@ library.add(fas, far, fab)
 import locations from '../content/locations.json'
 import { createClock, advanceClock, getPeriod, formatTime, formatDuration } from '../systems/clock.js'
 import { INITIAL_WEATHER, advanceWeather, WEATHER_INFO } from '../systems/weather.js'
+import { rollSpawns } from '../systems/spawn.js'
 
 
 // load scene and dialogue nodes only
@@ -52,7 +53,8 @@ function Game() {
 	const [activeLocation, setActiveLocation] = useState(() => {
 		const firstNodeId = idFromHash();
 		return (nodes[firstNodeId]?.location ?? null);
-	})
+	});
+	const [spawns, setSpawns] = useState([]);
 
 	// get current node from hash
 	useEffect(() => {
@@ -93,14 +95,6 @@ function Game() {
 		window.location.hash = init_id;
 	}
 
-	if (!currentNode) {
-		return (
-			<main>
-				<p>Error: {nodeId} doesn't exist</p>
-			</main>
-		)
-	}
-
 	const paragraphs = [].concat(currentNode.text);
 	const choices = (currentNode.choices ?? []).filter((e) => hasRequirements(e.requires, state));
 	const finish = choices.length === 0;
@@ -121,6 +115,25 @@ function Game() {
 		? { backgroundImage: 'url(/img/' + sceneImage + ')' }
 		: undefined;
 	const spriteSrc = currentNode.sprite ? '/img/' + currentNode.sprite : null;
+
+	// bug spawn
+	useEffect(() => {
+		setSpawns(rollSpawns(location, locationKey, period, world.weather))
+	}, [locationKey, period, world.weather])
+
+	const catchBug = (spotId) => {
+		const spawn = spawns.find((s) => s.spotId === spotId);
+		setSpawns((prev) => prev.filter((s) => s.spotId !== spotId));
+		setState((prev) => ({...prev, [`caught_${spawn.bug.id}`]: true }));
+	}
+
+	if (!currentNode) {
+		return (
+			<main>
+				<p>Error: {nodeId} doesn't exist</p>
+			</main>
+		)
+	}
 
 	return (
 		<main className="min-h-screen m-0 flex flex-row gap-0 text-text-normal">
@@ -220,9 +233,24 @@ function Game() {
 				) : (
 					<>
 						<div id="story" className="bg-background-tone-2-light p-8 shrink-0">
-							<article id="scene-image" className="relative w-full min-h-48 bg-background-tone-2-light bg-cover bg-cover bg-repeat-x overflow-hidden"
-								style={sceneBackground}
-							>
+							<article id="scene-image" className="relative w-full min-h-48 bg-background-tone-2-light bg-cover bg-cover bg-repeat-x overflow-hidden bg-blue-500"
+								style={sceneBackground}>
+								{(location?.spots ?? []).map((spot) => {
+									const spawn = spawns.find((s) => s.spotId === spot.id);
+									if (!spawn)
+										return (null);
+									return (
+										<button
+											key={spot.id}
+											type="button"
+											onClick={() => catchBug(spot.id)}
+											style={{left: `${spot.x}%`, top: `${spot.y}%`, backgroundColor: spawn.bug.color}}
+											className="absolute -translate-x-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs text-white"
+										>
+											{spawn.bug.name}
+										</button>
+									)
+								})}
 							</article>
 							<article ref={sceneRef} tabIndex={-1} aria-live="polite" className="mt-4 h-auto overflow-auto">
 								{paragraphs.map((p, i) => (
