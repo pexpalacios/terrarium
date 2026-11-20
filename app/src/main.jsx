@@ -10,16 +10,25 @@ import App from './pages/App.jsx'
 import Game from './pages/Game.jsx'
 
 //router
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+	[
+		{
+			path: "/",
+			element: <App />,
+		},
+		{
+			path: "/game",
+			element: <Game />,
+		},
+		{
+			path: '*', 
+			element: <ErrorPage notFound />
+		}
+	],
 	{
-		path: "/",
-		element: <App />,
-	},
-	{
-		path: "/game",
-		element: <Game />,
-	},
-]);
+		basename: import.meta.env.BASE_URL
+	}
+);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
